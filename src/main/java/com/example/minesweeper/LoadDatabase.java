@@ -29,6 +29,7 @@ class LoadDatabase {
             repository.save(new Game(2,2,2,2));
             repository.save(new Game(3,3,2,3));
             repository.save(new Game(4,4,2,4));
+            repository.save(new Game(20,20,10,4));
         };
     }
 }

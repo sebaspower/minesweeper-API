@@ -25,6 +25,9 @@ public class Game {
     @Column(columnDefinition = "boolean default false")
     private boolean finished;
 
+    @Column(columnDefinition = "boolean default false")
+    private boolean isGameOver;
+
     @Column
     @Lob
     private Cell[][] board;
@@ -118,5 +121,13 @@ public class Game {
     }
     public void decreaseTotalPossibleMines() {
         totalPossibleMines= this.getTotalPossibleMines() - 1;
+    }
+
+    public boolean isGameOver() {
+        return isGameOver;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        isGameOver = gameOver;
     }
 }

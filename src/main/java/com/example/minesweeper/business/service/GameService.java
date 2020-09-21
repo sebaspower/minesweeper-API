@@ -6,6 +6,9 @@ import com.example.minesweeper.data.repository.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class GameService {
     private final GameRepository gameRepository;
@@ -52,9 +55,39 @@ public class GameService {
 
     }
 
+    private List<int[]> getAdjacents(int totalRow, int totalCol, int row, int col){
+        List<int[]> list = new ArrayList<>();
+
+        for (int x = (col == 0) ? 0 : col-1; (x <= col+1 && x < totalRow); x++){
+            for(int y = (row == 0) ? 0 : row-1; (y <= row +1 && y < totalCol); y++){
+                if(!((x == row) && (y == col)))
+                    list.add(new int[]{x,y});
+            }
+        }
+        return list;
+    }
+
+    private Cell[][] showAdjacentCells (Cell[][] board, int totalRow, int totalCol, int row, int col){
+
+        List<int[]> adjacents;
+        if (board[row][col].isShow() == false) {
+            board[row][col].setShow(true);
+            if(board[row][col].getNearMines() == 0) {
+                adjacents = getAdjacents(totalRow, totalCol, row, col);
+                for(int[] cell: adjacents) board = showAdjacentCells(board, totalRow, totalCol, cell[0], cell[1]);
+            }
+        }
+        return board;
+    }
+
     private Game updateClickGame(Game game, int row, int col){
         Cell[][] board = game.getBoard();
-        board[row][col].setShow(true);
+        if (board[row][col].isHasMine() == false){
+            board = showAdjacentCells(board, game.getTotalRow(), game.getTotalCol(), row, col);
+        } else {
+            game.setFinished(true);
+            game.setGameOver(true);
+        }
         game.setBoard(board);
         return game;
     }
