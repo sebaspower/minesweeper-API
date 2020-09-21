@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class GameService {
@@ -48,11 +49,59 @@ public class GameService {
         return gameRepository.findById(gameId);
     }
 
-    public Game createGame(Game request){
-        Game game = new Game(request.getTotalRow(),request.getTotalCol(),request.getTotalMines(),request.getUserId());
-        gameRepository.save(game);
-        return game;
+    public Game createGame(Game game){
+        return createGame(game.getTotalRow(),game.getTotalCol(), game.getTotalMines(), game.getUserId());
+    }
 
+    private Game createGame(int row, int col, int mines, long userId){
+        Game game = null;
+        List<int[]> minesList;
+        // Finish previous games
+        Game oldGame = gameRepository.findByUserId(userId);
+        if(oldGame != null){
+            oldGame.setFinished(true);
+            gameRepository.save(oldGame);
+        }
+        // At least one empty cell.
+        if( mines < (row * col) -1) {
+            game = new Game(row, col, mines, userId);
+            game = populateMines(game);
+            gameRepository.save(game);
+        }
+        return game;
+    }
+
+    private Game populateMines(Game game) {
+        Random randNumber = new Random();
+        int randRow, randCol, minesCreated = 0;
+
+        Cell[][] board = game.getBoard();
+        while (minesCreated < game.getTotalMines()) {
+            randRow = randNumber.nextInt(game.getTotalRow());
+            randCol = randNumber.nextInt(game.getTotalCol());
+
+            if (board[randRow][randCol].isHasMine() == false) {
+                board[randRow][randCol].setHasMine(true);
+                minesCreated = minesCreated + 1;
+                board = getUpdateNearMinesBoard(game, randRow, randCol);
+            }
+        }
+        game.setBoard(board);
+        return game;
+    }
+
+    private Cell[][] getUpdateNearMinesBoard(Game game, int rowMine, int colMine){
+        Cell[][] board = game.getBoard();
+
+        int totalCol = game.getTotalCol();
+        int totalRow = game.getTotalRow();
+        for (int x = (colMine == 0) ? 0 : colMine-1; (x <= colMine+1 && x < totalRow); x++){
+            for(int y = (rowMine == 0) ? 0 : rowMine-1; (y <= rowMine +1 && y < totalCol); y++){
+                if(!((x == rowMine) && (y == colMine)))
+                    board[x][y].incNearMines();
+            }
+        }
+        return board;
     }
 
     private List<int[]> getAdjacents(int totalRow, int totalCol, int row, int col){

@@ -19,10 +19,9 @@ public class Cell implements Serializable {
         return nearMines;
     }
 
-    public void incNearMines(int nearMines) {
+    public void incNearMines() {
         this.nearMines = this.nearMines + 1 ;
     }
-
 
     public boolean isHasMine() {
         return hasMine;
