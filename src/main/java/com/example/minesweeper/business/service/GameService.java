@@ -23,25 +23,29 @@ public class GameService {
         return gameRepository.findAll();
     }
 
-    public Game findByUserId(long userId){
-        return gameRepository.findByUserId(userId);
-    }
-
     public Game showCell(long id, int row, int col){
         Game game = findById(id);
-        if ((game != null) && (row <= game.getTotalRow() && col <= game.getTotalCol())) {
-            game = updateClickGame(game, row, col);
+        if (game.isGameOver() == false) {
+            if ((game != null) && (row <= game.getTotalRow() && col <= game.getTotalCol())) {
+                game = updateClickGame(game, row, col);
+            }
+            gameRepository.save(game);
         }
         return game;
 
     }
 
+    public Game resume(long userId){
+        return gameRepository.getFirstByUserIdAndFinishedOrderByStartedDesc(userId, false);
+    }
+
     public Game setPossibleMine(long id, int row, int col){
         Game game = findById(id);
-
-        if ((game != null) && (row <= game.getTotalRow() && col <= game.getTotalCol())) {
-            game = updateMineGame(game, row, col);
-            gameRepository.save(game);
+        if(game.isGameOver() == false) {
+            if ((game != null) && (row <= game.getTotalRow() && col <= game.getTotalCol())) {
+                game = updateMineGame(game, row, col);
+                gameRepository.save(game);
+            }
         }
         return game;
     }
@@ -53,15 +57,19 @@ public class GameService {
         return createGame(game.getTotalRow(),game.getTotalCol(), game.getTotalMines(), game.getUserId());
     }
 
+    private void finishOldGames(long userId){
+        Game [] oldGames = gameRepository.findByUserIdAndFinished(userId, false);
+        for(int i =0; i< oldGames.length; i++){
+            oldGames[i].setFinished(true);
+        }
+    }
+
     private Game createGame(int row, int col, int mines, long userId){
         Game game = null;
         List<int[]> minesList;
-        // Finish previous games
-        Game oldGame = gameRepository.findByUserId(userId);
-        if(oldGame != null){
-            oldGame.setFinished(true);
-            gameRepository.save(oldGame);
-        }
+        // Finish previous games that belong to the user and finish them
+        finishOldGames(userId);
+
         // At least one empty cell.
         if( mines < (row * col) -1) {
             game = new Game(row, col, mines, userId);
@@ -131,27 +139,35 @@ public class GameService {
 
     private Game updateClickGame(Game game, int row, int col){
         Cell[][] board = game.getBoard();
-        if (board[row][col].isHasMine() == false){
-            board = showAdjacentCells(board, game.getTotalRow(), game.getTotalCol(), row, col);
-        } else {
-            game.setFinished(true);
-            game.setGameOver(true);
+        if(board[row][col].isPossibleMine() == false) {
+            board[row][col].setShow(true);
+            if (board[row][col].isHasMine() == false) {
+                board = showAdjacentCells(board, game.getTotalRow(), game.getTotalCol(), row, col);
+            } else {
+                game.setFinished(true);
+                game.setGameOver(true);
+            }
+            game.setBoard(board);
         }
-        game.setBoard(board);
         return game;
     }
 
     private Game updateMineGame(Game game, int row, int col){
         Cell[][] board = game.getBoard();
 
-        if((board[row][col].isPossibleMine() == false) && (game.getTotalPossibleMines() < game.getTotalMines())){
-            board[row][col].setPossibleMine(true);
-            game.increaseTotalPossibleMines();
-        } else if(board[row][col].isPossibleMine()) {
-            board[row][col].setPossibleMine(false);
-            game.decreaseTotalPossibleMines();
+        // Only set the mine when is not shown
+        if (board[row][col].isShow() == false) {
+            if (board[row][col].isPossibleMine()){
+                board[row][col].setPossibleMine(false);
+                game.decreaseTotalPossibleMines();
+            } else {
+                if (game.getTotalPossibleMines() < game.getTotalMines()) {
+                    board[row][col].setPossibleMine(true);
+                    game.increaseTotalPossibleMines();
+                }
+            }
+            game.setBoard(board);
         }
-        game.setBoard(board);
         return game;
     }
 

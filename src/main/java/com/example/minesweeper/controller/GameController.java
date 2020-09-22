@@ -51,6 +51,6 @@ public class GameController {
 
     @GetMapping("resume/{userId}")
     Game resume(@PathVariable long userId) throws Exception {
-        return gameService.findByUserId(userId);
+        return gameService.resume(userId);
     }
 }
