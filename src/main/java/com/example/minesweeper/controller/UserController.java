@@ -21,12 +21,15 @@ public class UserController {
     }
 
     @GetMapping
-    public Iterable<User> get() {
-        return userService.lookup();
+    public Iterable<User> get(){
+        Iterable<User> users = userService.lookup();
+        if (users == null)
+            throw new NotFoundException("None User found");
+        return users;
     }
 
     @PutMapping
-    public User put(@RequestBody User request) {
+    public User put(@RequestBody User request){
         if (request != null) {
             return userService.createUser(request.getName());
         }
@@ -34,7 +37,10 @@ public class UserController {
     }
 
     @GetMapping("/{name}")
-    User one(@PathVariable String name) throws Exception {
-        return userService.findByName(name);
+    User one(@PathVariable String name){
+        User user = userService.findByName(name);
+        if (user == null)
+            throw new NotFoundException("None User Name: "+ name);
+        return user;
     }
 }

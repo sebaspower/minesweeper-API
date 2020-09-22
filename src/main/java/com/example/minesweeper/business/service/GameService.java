@@ -5,6 +5,7 @@ import com.example.minesweeper.data.entity.Cell;
 import com.example.minesweeper.data.repository.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,6 @@ public class GameService {
             gameRepository.save(game);
         }
         return game;
-
     }
 
     public Game resume(long userId){
@@ -49,6 +49,7 @@ public class GameService {
         }
         return game;
     }
+
     public Game findById(long gameId){
         return gameRepository.findById(gameId);
     }
@@ -57,18 +58,9 @@ public class GameService {
         return createGame(game.getTotalRow(),game.getTotalCol(), game.getTotalMines(), game.getUserId());
     }
 
-    private void finishOldGames(long userId){
-        Game [] oldGames = gameRepository.findByUserIdAndFinished(userId, false);
-        for(int i =0; i< oldGames.length; i++){
-            oldGames[i].setFinished(true);
-        }
-    }
-
     private Game createGame(int row, int col, int mines, long userId){
         Game game = null;
         List<int[]> minesList;
-        // Finish previous games that belong to the user and finish them
-        finishOldGames(userId);
 
         // At least one empty cell.
         if( mines < (row * col) -1) {
@@ -125,7 +117,6 @@ public class GameService {
     }
 
     private Cell[][] showAdjacentCells (Cell[][] board, int totalRow, int totalCol, int row, int col){
-
         List<int[]> adjacents;
         if (board[row][col].isShow() == false) {
             board[row][col].setShow(true);
@@ -170,5 +161,4 @@ public class GameService {
         }
         return game;
     }
-
 }
