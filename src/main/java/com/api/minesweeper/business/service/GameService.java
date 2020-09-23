@@ -105,11 +105,11 @@ public class GameService {
 
     private List<int[]> getAdjacents(int totalRow, int totalCol, int row, int col){
         List<int[]> list = new ArrayList<>();
-
-        for (int x = (col == 0) ? 0 : col-1; (x <= col+1 && x < totalRow); x++){
-            for(int y = (row == 0) ? 0 : row-1; (y <= row +1 && y < totalCol); y++){
-                if(!((x == row) && (y == col)))
-                    list.add(new int[]{x,y});
+        for (int x = (row == 0) ? 0 : row-1; (x <= row+1 && x < totalRow); x++){
+            for(int y = (col == 0) ? 0 : col-1; (y <= col +1 && y < totalCol); y++){
+                if(!((x == row) && (y == col))) {
+                    list.add(new int[]{x, y});
+                }
             }
         }
         return list;
@@ -118,8 +118,8 @@ public class GameService {
     private Cell[][] showAdjacentCells (Cell[][] board, int totalRow, int totalCol, int row, int col){
         List<int[]> adjacents;
         if (board[row][col].isShow() == false) {
-            board[row][col].setShow(true);
             if(board[row][col].getNearMines() == 0) {
+                board[row][col].setShow(true);
                 adjacents = getAdjacents(totalRow, totalCol, row, col);
                 for(int[] cell: adjacents) board = showAdjacentCells(board, totalRow, totalCol, cell[0], cell[1]);
             }
@@ -130,7 +130,6 @@ public class GameService {
     private Game updateClickGame(Game game, int row, int col){
         Cell[][] board = game.getBoard();
         if(board[row][col].isPossibleMine() == false) {
-            board[row][col].setShow(true);
             if (board[row][col].isHasMine() == false) {
                 board = showAdjacentCells(board, game.getTotalRow(), game.getTotalCol(), row, col);
             } else {
