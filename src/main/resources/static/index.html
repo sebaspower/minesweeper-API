@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Minesweeper</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./css/main.css" rel="stylesheet" type="text/css">
+    <script src="./src/minesweeper.js"></script>
+</head>
+<body onload="initMinesweeper();">
+
+<h2>Minesweeper Game</h2>
+<div>
+    <button id='restart' display = 'none' onclick="restart()">New Game</button>
+    <br>
+    Username: <input type="text" name="username" id="username">
+    <button id="start" onclick="init()">Start</button>
+    <br>
+    <br>
+    <div id="playParameters">
+        <button id='playButton' onclick="play()">Play New Game</button>
+    Rows:          <input type="number" min="1" max="100" name="rows" id="rows">
+    Columns:       <input type="number" min="1" max="100" name="cols" id="cols">
+    Mines qty:     <input type="number" min="1" max="50" name="mines" id="mines">
+    <br>
+    </div>
+    <br>
+    <div id="resumeParameters">
+        Or     <button id='resumeButton' onclick="resume()">Resume previous Game</button>
+    </div>
+    <p class="resultUser" style="color:green"></p>
+    <p class="resultGame" style="color:blue"></p>
+    <p class="resumeGame" style="color:red"></p>
+    <p class="flaggedMines" style="color:blue"></p>
+    <br>
+    <p id="showData"></p>
+</div>
+</body>
+
+</html>
