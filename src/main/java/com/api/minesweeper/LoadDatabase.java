@@ -1,10 +1,10 @@
-package com.example.minesweeper;
+package com.api.minesweeper;
 
 
-import com.example.minesweeper.data.entity.User;
-import com.example.minesweeper.data.entity.Game;
-import com.example.minesweeper.data.repository.UserRepository;
-import com.example.minesweeper.data.repository.GameRepository;
+import com.api.minesweeper.data.entity.Game;
+import com.api.minesweeper.data.entity.User;
+import com.api.minesweeper.data.repository.GameRepository;
+import com.api.minesweeper.data.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.example.minesweeper.data.entity;
+package com.api.minesweeper.data.entity;
 
 
 import javax.persistence.*;

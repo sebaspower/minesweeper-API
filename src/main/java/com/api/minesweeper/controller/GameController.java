@@ -1,15 +1,11 @@
-package com.example.minesweeper.controller;
+package com.api.minesweeper.controller;
 
-import com.example.minesweeper.data.entity.Game;
-import com.example.minesweeper.business.service.GameService;
-import org.omg.CosNaming.NamingContextPackage.NotFound;
-import org.springframework.data.crossstore.ChangeSetPersister;
+import com.api.minesweeper.data.entity.Game;
+import com.api.minesweeper.business.service.GameService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 
@@ -28,7 +24,7 @@ public class GameController {
         return gameService.lookup();
     }
 
-    @PostMapping("new")
+    @PostMapping
     public Game post(@Valid @RequestBody Game game){
         return gameService.createGame(game);
     }
@@ -61,7 +57,7 @@ public class GameController {
         return game;
     }
 
-    @GetMapping("resume/{userId}")
+    @GetMapping("/resume/{userId}")
     Game resume(@PathVariable long userId) {
         Game game =gameService.resume(userId);
         if (game == null)

@@ -1,11 +1,10 @@
-package com.example.minesweeper.business.service;
+package com.api.minesweeper.business.service;
 
-import com.example.minesweeper.data.entity.Game;
-import com.example.minesweeper.data.entity.Cell;
-import com.example.minesweeper.data.repository.GameRepository;
+import com.api.minesweeper.data.repository.GameRepository;
+import com.api.minesweeper.data.entity.Game;
+import com.api.minesweeper.data.entity.Cell;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +25,7 @@ public class GameService {
 
     public Game showCell(long id, int row, int col){
         Game game = findById(id);
-        if (game.isGameOver() == false) {
+        if ((game != null ) && (game.isGameOver() == false)) {
             if ((game != null) && (row <= game.getTotalRow() && col <= game.getTotalCol())) {
                 game = updateClickGame(game, row, col);
             }
@@ -41,7 +40,7 @@ public class GameService {
 
     public Game setPossibleMine(long id, int row, int col){
         Game game = findById(id);
-        if(game.isGameOver() == false) {
+        if ((game != null) && (game.isGameOver() == false)) {
             if ((game != null) && (row <= game.getTotalRow() && col <= game.getTotalCol())) {
                 game = updateMineGame(game, row, col);
                 gameRepository.save(game);
@@ -95,8 +94,8 @@ public class GameService {
 
         int totalCol = game.getTotalCol();
         int totalRow = game.getTotalRow();
-        for (int x = (colMine == 0) ? 0 : colMine-1; (x <= colMine+1 && x < totalRow); x++){
-            for(int y = (rowMine == 0) ? 0 : rowMine-1; (y <= rowMine +1 && y < totalCol); y++){
+        for (int x = (rowMine == 0) ? 0 : rowMine-1; (x <= rowMine+1 && x < totalRow); x++){
+            for(int y = (colMine == 0) ? 0 : colMine-1; (y <= colMine +1 && y < totalCol); y++){
                 if(!((x == rowMine) && (y == colMine)))
                     board[x][y].incNearMines();
             }

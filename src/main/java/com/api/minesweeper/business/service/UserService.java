@@ -1,11 +1,9 @@
-package com.example.minesweeper.business.service;
+package com.api.minesweeper.business.service;
 
-import com.example.minesweeper.data.entity.User;
-import com.example.minesweeper.data.repository.UserRepository;
+import com.api.minesweeper.data.entity.User;
+import com.api.minesweeper.data.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Collection;
 
 @Service
 public class UserService {

@@ -1,4 +1,4 @@
-package com.example.minesweeper;
+package com.api.minesweeper;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

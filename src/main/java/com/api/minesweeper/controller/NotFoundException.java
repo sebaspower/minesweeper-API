@@ -1,4 +1,4 @@
-package com.example.minesweeper.controller;
+package com.api.minesweeper.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
