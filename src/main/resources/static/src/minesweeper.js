@@ -6,7 +6,6 @@ function initMinesweeper(){
     window.userId = null;
     window.gameIdToResume = null;
     window.gameId = null;
-    window.board = null;
     window.flaggedMines = 0;
     hide('resumeParameters');
     hide('playParameters');
@@ -36,12 +35,8 @@ function resume(){
     if(window.gameIdToResume){
         let xhr = new XMLHttpRequest();
         function setGame(){
-            if (xhr.readyState === 4 && xhr.status === 200) {
+            if (xhr.readyState === 4 && xhr.status === 200)
                 playingState(JSON.parse(this.responseText));
-            } else
-            {
-                console.log("Error resuming" + xhr.readyState);
-            }
         }
         send(xhr,"GET", gameUrl+'/'+ window.gameIdToResume, null, setGame);
     }
@@ -59,12 +54,8 @@ function play(){
     if (window.userId) {
         let xhr = new XMLHttpRequest();
         function userCbk(){
-            if (xhr.readyState === 4 && xhr.status === 200) {
+            if (xhr.readyState === 4 && xhr.status === 200)
                 playingState(JSON.parse(this.responseText));
-            } else {
-                console.log("Problem creating game");
-            }
-
         };
         let data = JSON.stringify({
             "totalRow": parseInt(document.querySelector('#rows').value),
@@ -85,14 +76,24 @@ function getPreviousGames(){
             result.innerHTML = "GameToResume:"+ window.gameIdToResume;
             show('resumeParameters');
             document.getElementById("resumeButton").disabled = false;
-        } else {
-            console.log("None game to resume");
         }
     }
     let result = document.querySelector('.resumeGame');
     send(xhr,"GET", gameUrl+'/resume/'+ window.userId, null, setResumeGame);
 }
 
+function showCell(row, col){
+    let xhr = new XMLHttpRequest();
+    function refreshBoard(){
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var data = JSON.parse(this.responseText);
+            if(data.gameOver) gameOver();
+            updateBoard(data.board);
+        }
+    }
+    let result = document.querySelector('.resumeGame');
+    send(xhr,"PUT", gameUrl+'/'+ window.gameId +'/show/'+row+','+col , null, refreshBoard);
+}
 function send(xhr, method, url, data, callback){
     xhr.open(method, url, true);
     xhr.setRequestHeader("Content-Type", "application/json");
@@ -110,10 +111,15 @@ function show(idName){
     document.getElementById(idName).style.hidden = false;
 }
 
+function gameOver(){
+    clearInterval(window.t);
+    document.getElementById("timeElapsed").innerHTML = "GAME OVER";
+    document.getElementById("timeElapsed").style.color= "red";
+}
 function playingState(data){
     window.gameId = data.id;
-    window.board = data.board;
     window.flaggedMines = data.totalPossibleMines;
+    window.timeStarted = data.started;
     document.querySelector('.resultGame').innerHTML = "gameId:"+ window.gameId;
     document.querySelector('.flaggedMines').innerHTML = "Flagged:"+ window.flaggedMines;
     document.getElementById('cols').value = data.totalCol;
@@ -125,7 +131,19 @@ function playingState(data){
     document.getElementById('resumeButton').disabled = true;
     document.getElementById('playButton').disabled = true;
     show('restart');
-    updateBoard();
+    updateBoard(data.board);
+    window.t = setInterval(function() {
+        if(window.timeStarted) {
+            var now = new Date().getTime();
+            var distance = now - window.timeStarted;
+            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            document.getElementById("timeElapsed").innerHTML = "Time Elapsed:"+ hours + "h "
+                + minutes + "m " + seconds + "s ";
+            document.getElementById("timeElapsed").style.color = 'blue';
+        }
+    }, 1000);
 }
 
 function initUserState(userId){
@@ -144,27 +162,32 @@ function initUserState(userId){
 }
 
 
-function updateBoard() {
+function updateBoard(board) {
     if(board) {
-        var table = document.createElement("table");
-        for (var i = 0; i < window.board.length; i++) {
+        var table = document.getElementById('myTable')
+        table.innerHTML = "";
+        for (var i = 0; i < board.length; i++) {
             var tr = table.insertRow(-1);
-            for (var j = 0; j < window.board[i].length; j++) {
+            for (var j = 0; j < board[i].length; j++) {
                 var tabCell = tr.insertCell(-1);
-                if(window.board[i][j].show==false) {
-                    if ((window.board[i][j].hasMine)) tabCell.innerHTML = 'X';
+                if(board[i][j].show) {
+                    if ((board[i][j].possibleMine)) tabCell.innerHTML = 'X';
                     else{
-                        tabCell.innerHTML = window.board[i][j].nearMines;
-                        //if (window.board[i][j].nearMines == '0') tabCell.innerHTML = '';
-                        //else tabCell.innerHTML = window.board[i][j].nearMines;
+                        if (board[i][j].nearMines == '0') tabCell.innerHTML = '.';
+                        else tabCell.innerHTML = board[i][j].nearMines;
                     }
                 }
                 else tabCell.innerHTML = '#';
-
             }
-        }.
-        var divContainer = document.getElementById("showData");
-        divContainer.innerHTML = "";
-        divContainer.appendChild(table);
+        }
+        $("#myTable td").click(function() {
+            var col = parseInt( $(this).index());
+            var row = parseInt( $(this).parent().index() );
+            $("#result").html( "Row=" + row + "  ,  Col="+ col );
+            showCell(row,col);
+        });
     }
 }
+
+
+

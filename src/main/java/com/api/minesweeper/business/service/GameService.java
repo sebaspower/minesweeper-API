@@ -117,13 +117,13 @@ public class GameService {
 
     private Cell[][] showAdjacentCells (Cell[][] board, int totalRow, int totalCol, int row, int col){
         List<int[]> adjacents;
-        if (board[row][col].isShow() == false) {
-            if(board[row][col].getNearMines() == 0) {
+        if ((board[row][col].isShow() == false) &&
+                (board[row][col].getNearMines() == 0) &&
+                (board[row][col].isHasMine() == false)) {
                 board[row][col].setShow(true);
                 adjacents = getAdjacents(totalRow, totalCol, row, col);
                 for(int[] cell: adjacents) board = showAdjacentCells(board, totalRow, totalCol, cell[0], cell[1]);
             }
-        }
         return board;
     }
 
@@ -131,7 +131,11 @@ public class GameService {
         Cell[][] board = game.getBoard();
         if(board[row][col].isPossibleMine() == false) {
             if (board[row][col].isHasMine() == false) {
-                board = showAdjacentCells(board, game.getTotalRow(), game.getTotalCol(), row, col);
+                if(board[row][col].getNearMines() == 0) {
+                    board = showAdjacentCells(board, game.getTotalRow(), game.getTotalCol(), row, col);
+                }else {
+                    board[row][col].setShow(true);
+                }
             } else {
                 game.setFinished(true);
                 game.setGameOver(true);

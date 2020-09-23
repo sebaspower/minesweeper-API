@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="./css/main.css" rel="stylesheet" type="text/css">
     <script src="./src/minesweeper.js"></script>
+    <script  src="http://code.jquery.com/jquery-1.9.1.min.js" ></script>
+    <script>
+    </script>
 </head>
 <body onload="initMinesweeper();">
 
@@ -32,9 +35,12 @@
     <p class="resultGame" style="color:blue"></p>
     <p class="resumeGame" style="color:red"></p>
     <p class="flaggedMines" style="color:blue"></p>
+    <p id="timeElapsed" style="color:blue"></p>
     <br>
-    <p id="showData"></p>
+    <div id="result"> </div>
+    <table id="myTable" border="2" style="border-collapse: collapse;" cellpadding="8">
+    </table>
+</div>
 </div>
 </body>
-
 </html>
