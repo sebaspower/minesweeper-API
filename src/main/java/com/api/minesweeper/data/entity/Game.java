@@ -2,6 +2,8 @@ package com.api.minesweeper.data.entity;
 
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.Date;
 
 @Entity
@@ -11,10 +13,16 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @Min(1)
+    @Max(80)
     private int totalRow;
 
+    @Min(1)
+    @Max(80)
     private int totalCol;
 
+    @Min(1)
+    @Max(1000)
     private int totalMines;
 
     private int totalPossibleMines;
