@@ -6,10 +6,10 @@ function initMinesweeper(){
     window.userId = null;
     window.gameIdToResume = null;
     window.gameId = null;
-    window.flaggedMines = 0;
     hide('resumeParameters');
     hide('playParameters');
     hide('restart');
+    hide('result');
 }
 
 function restart(){
@@ -73,27 +73,35 @@ function getPreviousGames(){
     function setResumeGame(){
         if (xhr.readyState === 4 && xhr.status === 200) {
             window.gameIdToResume = JSON.parse(this.responseText).id;
-            result.innerHTML = "GameToResume:"+ window.gameIdToResume;
             show('resumeParameters');
             document.getElementById("resumeButton").disabled = false;
         }
     }
-    let result = document.querySelector('.resumeGame');
     send(xhr,"GET", gameUrl+'/resume/'+ window.userId, null, setResumeGame);
 }
 
 function showCell(row, col){
+    let url = gameUrl+'/'+ window.gameId +'/show/'+row+','+col;
+    sendClick(url, row, col);
+}
+
+function flagMine(row, col){
+    let url = gameUrl+'/'+ window.gameId +'/mine/'+row+','+col;
+    sendClick(url, row, col);
+}
+
+function sendClick(url, row, col){
     let xhr = new XMLHttpRequest();
     function refreshBoard(){
         if (xhr.readyState === 4 && xhr.status === 200) {
             var data = JSON.parse(this.responseText);
-            if(data.gameOver) gameOver();
-            updateBoard(data.board);
+            updateBoard(data);
         }
     }
-    let result = document.querySelector('.resumeGame');
-    send(xhr,"PUT", gameUrl+'/'+ window.gameId +'/show/'+row+','+col , null, refreshBoard);
+    send(xhr,"PUT", url, null, refreshBoard);
 }
+
+
 function send(xhr, method, url, data, callback){
     xhr.open(method, url, true);
     xhr.setRequestHeader("Content-Type", "application/json");
@@ -118,10 +126,7 @@ function gameOver(){
 }
 function playingState(data){
     window.gameId = data.id;
-    window.flaggedMines = data.totalPossibleMines;
     window.timeStarted = data.started;
-    document.querySelector('.resultGame').innerHTML = "gameId:"+ window.gameId;
-    document.querySelector('.flaggedMines').innerHTML = "Flagged:"+ window.flaggedMines;
     document.getElementById('cols').value = data.totalCol;
     document.getElementById('rows').value = data.totalRow;
     document.getElementById('mines').value = data.totalMines;
@@ -131,7 +136,8 @@ function playingState(data){
     document.getElementById('resumeButton').disabled = true;
     document.getElementById('playButton').disabled = true;
     show('restart');
-    updateBoard(data.board);
+    show('result');
+    updateBoard(data);
     window.t = setInterval(function() {
         if(window.timeStarted) {
             var now = new Date().getTime();
@@ -139,7 +145,7 @@ function playingState(data){
             var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            document.getElementById("timeElapsed").innerHTML = "Time Elapsed:"+ hours + "h "
+            document.getElementById("timeElapsed").innerHTML = "TIME ELAPSED:"+ hours + "h "
                 + minutes + "m " + seconds + "s ";
             document.getElementById("timeElapsed").style.color = 'blue';
         }
@@ -148,7 +154,6 @@ function playingState(data){
 
 function initUserState(userId){
     window.userId  = userId;
-    document.querySelector('.resultUser').innerHTML = "UserId:"+ window.userId;
     document.getElementById('start').disabled = true;
     document.getElementById('username').disabled = true;
     document.getElementById('cols').value = '';
@@ -159,35 +164,45 @@ function initUserState(userId){
     document.getElementById('mines').disabled = false;
     show('playParameters');
     document.getElementById('playButton').disabled = false;
+    clearInterval(window.t);
 }
 
-
-function updateBoard(board) {
-    if(board) {
-        var table = document.getElementById('myTable')
-        table.innerHTML = "";
-        for (var i = 0; i < board.length; i++) {
-            var tr = table.insertRow(-1);
-            for (var j = 0; j < board[i].length; j++) {
-                var tabCell = tr.insertCell(-1);
-                if(board[i][j].show) {
-                    if ((board[i][j].possibleMine)) tabCell.innerHTML = 'X';
-                    else{
-                        if (board[i][j].nearMines == '0') tabCell.innerHTML = '.';
-                        else tabCell.innerHTML = board[i][j].nearMines;
+function updateBoard(data) {
+    if(data.gameOver) {
+        gameOver();
+    } else{
+        if (data) {
+            document.querySelector('.flaggedMines').innerHTML = "Flagged Mines:"+ data.totalPossibleMines;
+            var table = document.getElementById('myTable')
+            table.innerHTML = "";
+            for (var i = 0; i < data.board.length; i++) {
+                var tr = table.insertRow(-1);
+                for (var j = 0; j < data.board[i].length; j++) {
+                    var tabCell = tr.insertCell(-1);
+                    if ((data.board[i][j].possibleMine)) {
+                        tabCell.innerHTML = '@';
+                    } else {
+                        if (data.board[i][j].show) {
+                            if (data.board[i][j].nearMines == '0') tabCell.innerHTML = '.';
+                            else tabCell.innerHTML = data.board[i][j].nearMines;
+                        } else tabCell.innerHTML = '#';
                     }
                 }
-                else tabCell.innerHTML = '#';
             }
-        }
-        $("#myTable td").click(function() {
-            var col = parseInt( $(this).index());
-            var row = parseInt( $(this).parent().index() );
-            $("#result").html( "Row=" + row + "  ,  Col="+ col );
-            showCell(row,col);
-        });
+            $("#myTable td").click(function (event) {
+                var col = parseInt($(this).index());
+                var row = parseInt($(this).parent().index());
+                var clicked = document.getElementsByName('clickCell')[0];
+                if (clicked.checked){
+                    showCell(row, col);
+                } else {
+                    flagMine(row, col);
+                }
+            });
+         }
     }
 }
+
 
 
 

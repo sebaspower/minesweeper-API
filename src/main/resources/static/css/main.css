@@ -1,6 +1,6 @@
 h2 { color: red }
 
-#resultUser,#resultGame, #resumeGame,#flaggedMines{
+#timeElapsed,#flaggedMines{
     display:inline-block;
 }
 

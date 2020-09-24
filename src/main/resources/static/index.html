@@ -7,11 +7,8 @@
     <link href="./css/main.css" rel="stylesheet" type="text/css">
     <script src="./src/minesweeper.js"></script>
     <script  src="http://code.jquery.com/jquery-1.9.1.min.js" ></script>
-    <script>
-    </script>
 </head>
 <body onload="initMinesweeper();">
-
 <h2>Minesweeper Game</h2>
 <div>
     <button id='restart' display = 'none' onclick="restart()">New Game</button>
@@ -31,15 +28,15 @@
     <div id="resumeParameters">
         Or     <button id='resumeButton' onclick="resume()">Resume previous Game</button>
     </div>
-    <p class="resultUser" style="color:green"></p>
-    <p class="resultGame" style="color:blue"></p>
-    <p class="resumeGame" style="color:red"></p>
-    <p class="flaggedMines" style="color:blue"></p>
-    <p id="timeElapsed" style="color:blue"></p>
+    <p id="timeElapsed" style="color:blue"></p> <p class="flaggedMines" style="color:blue"></p>
     <br>
-    <div id="result"> </div>
+    <div id="result">
+    <input type="radio" name="clickCell" value="false" checked /> Show Cell
+    <input type="radio" name="clickCell" value="true" /> Flag Mine
+    </div>
     <table id="myTable" border="2" style="border-collapse: collapse;" cellpadding="8">
     </table>
+
 </div>
 </div>
 </body>
