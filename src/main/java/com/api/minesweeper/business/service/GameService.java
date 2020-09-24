@@ -103,26 +103,27 @@ public class GameService {
         return board;
     }
 
-    private List<int[]> getAdjacents(int totalRow, int totalCol, int row, int col){
-        List<int[]> list = new ArrayList<>();
+    private void getAdjacents(Cell[][] board,int totalRow, int totalCol, int row, int col){
         for (int x = (row == 0) ? 0 : row-1; (x <= row+1 && x < totalRow); x++){
             for(int y = (col == 0) ? 0 : col-1; (y <= col +1 && y < totalCol); y++){
                 if(!((x == row) && (y == col))) {
-                    list.add(new int[]{x, y});
+                    if ((board[x][y].isShow() == false) &&
+                            (board[x][y].getNearMines() == 0) &&
+                            (board[x][y].isHasMine() == false)) {
+                        board[row][col].setShow(true);
+                        getAdjacents(board, totalRow, totalCol, x, y);
+                    }
                 }
             }
         }
-        return list;
     }
 
     private Cell[][] showAdjacentCells (Cell[][] board, int totalRow, int totalCol, int row, int col){
-        List<int[]> adjacents;
         if ((board[row][col].isShow() == false) &&
                 (board[row][col].getNearMines() == 0) &&
                 (board[row][col].isHasMine() == false)) {
                 board[row][col].setShow(true);
-                adjacents = getAdjacents(totalRow, totalCol, row, col);
-                for(int[] cell: adjacents) board = showAdjacentCells(board, totalRow, totalCol, cell[0], cell[1]);
+                getAdjacents(board, totalRow, totalCol, row, col);
             }
         return board;
     }
