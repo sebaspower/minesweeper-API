@@ -1,5 +1,5 @@
-const userUrl = 'http://localhost:5000/users';
-const gameUrl = 'http://localhost:5000/games';
+const userUrl = 'http://ec2-3-134-99-212.us-east-2.compute.amazonaws.com/users';
+const gameUrl = 'http://ec2-3-134-99-212.us-east-2.compute.amazonaws.com/games';
 
 
 function initMinesweeper(){
