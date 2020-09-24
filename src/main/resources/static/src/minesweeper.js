@@ -27,6 +27,7 @@ function init(){
             getPreviousGames();
         }
     };
+    let name = document.querySelector('#username');
     let data = JSON.stringify({ "name": name.value});
     send(xhr,"PUT", userUrl, data, userCbk);
 }
