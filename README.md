@@ -1,6 +1,6 @@
 
 ## URl of the game
-Here you can start playing this first version of the game [Minesweeper](http://ec2-18-191-59-56.us-east-2.compute.amazonaws.com/). If it now available please let me know. 
+Here you can start playing this first version of the game http://ec2-18-191-59-56.us-east-2.compute.amazonaws.com/. If it now available please let me know. 
 
 ## TODO What is missing and known issues
 Due to I prioritized the delivery of the Game as soon as possible, and not having so much time to work on this Test, I 
