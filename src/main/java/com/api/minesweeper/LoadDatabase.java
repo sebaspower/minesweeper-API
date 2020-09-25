@@ -15,21 +15,14 @@ class LoadDatabase {
     @Bean
     CommandLineRunner initDatabase(UserRepository repository) {
         return args -> {
-            repository.save(new User("burglar"));
-            repository.save(new User("thief"));
-            repository.save(new User("sebas"));
-            repository.save(new User("juan"));
+            //repository.deleteAll();
         };
     }
 
     @Bean
     CommandLineRunner initDatabase2(GameRepository repository) {
         return args -> {
-            repository.save(new Game(1,2,2,1));
-            repository.save(new Game(2,2,2,2));
-            repository.save(new Game(3,3,2,3));
-            repository.save(new Game(4,4,2,4));
-            repository.save(new Game(20,20,10,4));
+            //repository.deleteAll();
         };
     }
 }

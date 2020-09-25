@@ -1,6 +1,5 @@
-const userUrl = 'http://ec2-3-134-99-212.us-east-2.compute.amazonaws.com/users';
-const gameUrl = 'http://ec2-3-134-99-212.us-east-2.compute.amazonaws.com/games';
-
+const userUrl = 'http://ec2-18-191-59-56.us-east-2.compute.amazonaws.com/users';
+const gameUrl = 'http://ec2-18-191-59-56.us-east-2.compute.amazonaws.com/games';
 
 function initMinesweeper(){
     window.userId = null;
@@ -169,40 +168,39 @@ function initUserState(userId){
 }
 
 function updateBoard(data) {
-    if(data.gameOver) {
-        gameOver();
-    } else{
-        if (data) {
-            document.querySelector('.flaggedMines').innerHTML = "Flagged Mines:"+ data.totalPossibleMines;
-            var table = document.getElementById('myTable')
-            table.innerHTML = "";
-            for (var i = 0; i < data.board.length; i++) {
-                var tr = table.insertRow(-1);
-                for (var j = 0; j < data.board[i].length; j++) {
-                    var tabCell = tr.insertCell(-1);
-                    if ((data.board[i][j].possibleMine)) {
-                        tabCell.innerHTML = '@';
-                    } else {
-                        if (data.board[i][j].show) {
-                            if (data.board[i][j].nearMines == '0') tabCell.innerHTML = '.';
-                            else tabCell.innerHTML = data.board[i][j].nearMines;
-                        } else tabCell.innerHTML = '#';
-                    }
+    if (data) {
+        document.querySelector('.flaggedMines').innerHTML = "Flagged Mines:"+ data.totalPossibleMines;
+        var table = document.getElementById('myTable')
+        table.innerHTML = "";
+        for (var i = 0; i < data.board.length; i++) {
+            var tr = table.insertRow(-1);
+            for (var j = 0; j < data.board[i].length; j++) {
+                var tabCell = tr.insertCell(-1);
+                if ((data.gameOver) && (data.board[i][j].hasMine)) {
+                    tabCell.innerHTML = 'X';
+                    gameOver();
+                } else if (data.board[i][j].possibleMine) {
+                    tabCell.innerHTML = '@';
+                } else if (data.board[i][j].show) {
+                    if (data.board[i][j].nearMines == '0') tabCell.innerHTML = '.';
+                    else tabCell.innerHTML = data.board[i][j].nearMines;
+                } else
+                    tabCell.innerHTML = '#';
                 }
             }
-            $("#myTable td").click(function (event) {
-                var col = parseInt($(this).index());
-                var row = parseInt($(this).parent().index());
-                var clicked = document.getElementsByName('clickCell')[0];
-                if (clicked.checked){
-                    showCell(row, col);
-                } else {
-                    flagMine(row, col);
-                }
-            });
-         }
-    }
+        }
+    $("#myTable td").click(function (event) {
+        var col = parseInt($(this).index());
+        var row = parseInt($(this).parent().index());
+        var clicked = document.getElementsByName('clickCell')[0];
+        if (clicked.checked){
+            showCell(row, col);
+        } else {
+            flagMine(row, col);
+        }
+    });
 }
+
 
 
 
