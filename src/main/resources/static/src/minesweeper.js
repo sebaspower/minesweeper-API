@@ -1,5 +1,5 @@
-const userUrl = 'http://ec2-18-191-59-56.us-east-2.compute.amazonaws.com/users';
-const gameUrl = 'http://ec2-18-191-59-56.us-east-2.compute.amazonaws.com/games';
+const userUrl = window.location.href + '/users';
+const gameUrl = window.location.href + '/games';
 
 function initMinesweeper(){
     window.userId = null;
