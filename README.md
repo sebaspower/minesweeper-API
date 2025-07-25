@@ -1,39 +1,34 @@
-# minesweeper-API
-API test
 
-We ask that you complete the following challenge to evaluate your development skills. Please use the programming language and framework discussed during your interview to accomplish the following task.
+## URl of the game
+Here you can start playing this first version of the game http://ec2-18-222-199-115.us-east-2.compute.amazonaws.com/. If it not available please let me know. 
 
-PLEASE DO NOT FORK THE REPOSITORY. WE NEED A PUBLIC REPOSITORY FOR THE REVIEW. 
+## TODO What is missing and known issues
+Due to I prioritized the delivery of the Game as soon as possible, and not having so much time to work on this Test, I 
+did this game with several drawbacks and things that need to be improved.
 
-## The Game
-Develop the classic game of [Minesweeper](https://en.wikipedia.org/wiki/Minesweeper_(video_game))
+## [Backend]
+* Add more Unit tests for Backends and for algorithms.  
+* Improve the algorithm for showing adjacent cells, when the board is bigger than 100*100 it's causing a Stack Over Flow Error, 
+  this is done due to recursion, and the way of how arguments are being passed. 
+* Add better logging considering all levels.
+  
+## [API]
+* Improve documentation done in Swagger, put more examples how it's used and the responses.
+* Better Error handling for the Rest API, add all the http error codes accordingly. 
+* Don't return all values of the entity to the API calls.
+* Add better logging considering all levels.
 
-## Show your work
+## [UI]
+* Unit tests for UI part. 
+* Improve UI code using a Framework and improving visualization (I'm not a UI dev, so I did what I know..)
+* Endpoint to consume should be taken from a configuration files instead of beign hardcoded internally in the code. 
+* Improve performance how the data is being managed in the page and rendering board.
+* Add better logging considering all levels.
 
-1.  Create a Public repository ( please dont make a pull request, clone the private repository and create a new plublic one on your profile)
-2.  Commit each step of your process so we can follow your thought process.
+## [Testing]
+* The game need to run mores tests to find some scenarios of failing and tests all component altogether. 
 
-## What to build
-The following is a list of items (prioritized from most important to least important) we wish to see:
-* Design and implement  a documented RESTful API for the game (think of a mobile app for your API)
-* Implement an API client library for the API designed above. Ideally, in a different language, of your preference, to the one used for the API
-* When a cell with no adjacent mines is revealed, all adjacent squares will be revealed (and repeat)
-* Ability to 'flag' a cell with a question mark or red flag
-* Detect when game is over
-* Persistence
-* Time tracking
-* Ability to start a new game and preserve/resume the old ones
-* Ability to select the game parameters: number of rows, columns, and mines
-* Ability to support multiple users/accounts
- 
-## Deliverables we expect:
-* URL where the game can be accessed and played (use any platform of your preference: heroku.com, aws.amazon.com, etc)
-* Code in a public Github repo
-* README file with the decisions taken and important notes
-
-## Time Spent
-You need to fully complete the challenge. We suggest not spending more than 5 days total.  Please make commits as often as possible so we can see the time you spent and please do not make one commit.  We will evaluate the code and time spent.
- 
-What we want to see is how well you handle yourself given the time you spend on the problem, how you think, and how you prioritize when time is sufficient to solve everything.
-
-Please email your solution as soon as you have completed the challenge or the time is up.
+## [Devops]
+* Deployment of the Game in EC2 Instance was done manually, the spring-boot application need to run automatically and 
+detect any failure in order to recover. Use a container.
+* The instance used is the free tier that has some limitations.  
